@@ -1,0 +1,120 @@
+-- -----------------------------------------------------
+-- Schema aloCrimes
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `aloCrimes` ;
+USE `aloCrimes` ;
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`feedback`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`feedback` (
+  `id_usuario_comum` INT NOT NULL,
+  `avaliacao` VARCHAR(100) NULL,
+  PRIMARY KEY (`id_usuario_comum`))
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`Usuario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`Usuario` (
+  `email` INT NOT NULL,
+  `nome` VARCHAR(50) NULL,
+  PRIMARY KEY (`email`),
+  UNIQUE INDEX `nome_UNIQUE` (`nome` ASC))
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`Usuario comum`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`Usuario comum` (
+  `Id_usuario_comum` INT NOT NULL,
+  `feedback_id_usuario_comum` INT NOT NULL,
+  `Usuario_email` INT NOT NULL,
+  PRIMARY KEY (`Id_usuario_comum`, `feedback_id_usuario_comum`, `Usuario_email`),
+  INDEX `fk_Usuario comum_feedback1_idx` (`feedback_id_usuario_comum` ASC),
+  INDEX `fk_Usuario comum_Usuario1_idx` (`Usuario_email` ASC),
+  CONSTRAINT `fk_Usuario comum_feedback1`
+    FOREIGN KEY (`feedback_id_usuario_comum`)
+    REFERENCES `aloCrimes`.`feedback` (`id_usuario_comum`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Usuario comum_Usuario1`
+    FOREIGN KEY (`Usuario_email`)
+    REFERENCES `aloCrimes`.`Usuario` (`email`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`administrador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`administrador` (
+  `Id_adminstrador` INT NOT NULL,
+  `CPF` VARCHAR(45) NOT NULL,
+  `Usuario_email` INT NOT NULL,
+  PRIMARY KEY (`Id_adminstrador`, `CPF`, `Usuario_email`),
+  INDEX `fk_administrador_Usuario1_idx` (`Usuario_email` ASC),
+  CONSTRAINT `fk_administrador_Usuario1`
+    FOREIGN KEY (`Usuario_email`)
+    REFERENCES `aloCrimes`.`Usuario` (`email`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`Dado`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`Dado` (
+  `Data` DATE NOT NULL,
+  `UF` VARCHAR(2) NOT NULL,
+  `id_dado` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_dado`))
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`ocorrencias`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`ocorrencias` (
+  `quant_ocorrencias` INT NOT NULL,
+  `tipo_crime` VARCHAR(40) NULL,
+  `Dado_id_dado` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Dado_id_dado`),
+  CONSTRAINT `fk_ocorrencias_Dado1`
+    FOREIGN KEY (`Dado_id_dado`)
+    REFERENCES `aloCrimes`.`Dado` (`id_dado`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`municipio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`municipio` (
+  `municipio` VARCHAR(20) NOT NULL,
+  `quant_vitimas` INT NULL,
+  `regiao` VARCHAR(15) NULL,
+  `Dado_id_dado` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`municipio`, `Dado_id_dado`),
+  INDEX `fk_municipio_Dado1_idx` (`Dado_id_dado` ASC),
+  CONSTRAINT `fk_municipio_Dado1`
+    FOREIGN KEY (`Dado_id_dado`)
+    REFERENCES `aloCrimes`.`Dado` (`id_dado`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+
+-- -----------------------------------------------------
+-- Table `aloCrimes`.`vitimas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aloCrimes`.`vitimas` (
+  `sexo_vitima` VARCHAR(15) NULL,
+  `quant_vitimas` INT NULL,
+  `tipo_crime` VARCHAR(45) NULL,
+  `Dado_id_dado` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Dado_id_dado`),
+  CONSTRAINT `fk_vitimas_Dado1`
+    FOREIGN KEY (`Dado_id_dado`)
+    REFERENCES `aloCrimes`.`Dado` (`id_dado`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
